@@ -72,38 +72,40 @@ def get_weather_icon(icon_code, size=(50,50)):
 #--------------
 
 def update_forecasts(w_request):
-    for widget in hourly_frame.winfo_children():
-        widget.destroy()
-        
-    for widget in daily_frame.winfo_children()[3:]:
-        widget.destroy()
-    for hour in w_request["hourly"][:24]:
-        item = ctk.CTkFrame(hourly_frame, fg_color="#6B6B6B", width=80)
-        item.pack(side="left", padx=5, pady=5, fill="y")
+    try:
+        for widget in hourly_frame.winfo_children():
+            if widget.winfo_exists():
+                widget.destroy()
+            
+        for widget in daily_frame.winfo_children()[3:]:
+            widget.destroy()
+        for hour in w_request["hourly"][:24]:
+            item = ctk.CTkFrame(hourly_frame, fg_color="#6B6B6B", width=80)
+            item.pack(side="left", padx=5, pady=5, fill="y")
 
-        icon_code = hour['weather'][0]['icon']
-        icon_img = get_weather_icon(icon_code)
-        
-        time_str = datetime.fromtimestamp(hour['dt']).strftime('%-I %p')
-        ctk.CTkLabel(item, text="", image=icon_img).pack(pady=2)
-        ctk.CTkLabel(item, text=time_str, font=("Helvetica", 11)).pack(pady=2)
-        ctk.CTkLabel(item, text=f"{round(hour['temp'])}°", font=("Helvetica", 14, "bold")).pack(pady=2)
-        
-    for day in w_request["daily"][1:8]:
-        day_row = ctk.CTkFrame(daily_frame, fg_color="#6B6B6B", height=40)
-        day_row.pack(fill="x", padx=10, pady=5)
+            icon_code = hour['weather'][0]['icon']
+            icon_img = get_weather_icon(icon_code)
+            
+            time_str = datetime.fromtimestamp(hour['dt']).strftime('%-I %p')
+            ctk.CTkLabel(item, text="", image=icon_img).pack(pady=2)
+            ctk.CTkLabel(item, text=time_str, font=("Helvetica", 11)).pack(pady=2)
+            ctk.CTkLabel(item, text=f"{round(hour['temp'])}°", font=("Helvetica", 14, "bold")).pack(pady=2)
+            
+        for day in w_request["daily"][1:8]:
+            day_row = ctk.CTkFrame(daily_frame, fg_color="#6B6B6B", height=40)
+            day_row.pack(fill="x", padx=10, pady=5)
 
-        icon_code = day['weather'][0]['icon']
-        icon_img = get_weather_icon(icon_code)
+            icon_code = day['weather'][0]['icon']
+            icon_img = get_weather_icon(icon_code)
+            
+            date_str = datetime.fromtimestamp(day['dt']).strftime('%a')
+            ctk.CTkLabel(day_row, text=date_str, width=40).pack(side="left", padx=10)
+            ctk.CTkLabel(day_row, text="", image=icon_img).pack(side="left", padx=5)
+            temp_str = f"H: {round(day['temp']['max'])}° L: {round(day['temp']['min'])}°"
+            ctk.CTkLabel(day_row, text=temp_str, font=("Helvetica", 11, "bold")).pack(side="right", padx=10)
+        except Exception:
+            pass
         
-        date_str = datetime.fromtimestamp(day['dt']).strftime('%a')
-        ctk.CTkLabel(day_row, text=date_str, width=40).pack(side="left", padx=10)
-        ctk.CTkLabel(day_row, text="", image=icon_img).pack(side="left", padx=5)
-        temp_str = f"H: {round(day['temp']['max'])}° L: {round(day['temp']['min'])}°"
-        ctk.CTkLabel(day_row, text=temp_str, font=("Helvetica", 11, "bold")).pack(side="right", padx=10)
-        
-        
-
 def getting_weather():
     search_btn.configure(state="disabled", text="Searching...")
     desc_label.configure(text="Fetching weather data...")
