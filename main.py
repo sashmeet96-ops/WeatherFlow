@@ -6,9 +6,10 @@ import io
 import threading
 import os
 #-------------
+"""Dictionary to store contents of new icon images to prevent loading stall"""
 icon_cache = {}
 #-------------
-
+"""Set up theme and overall layout of dashboard"""
 ctk.set_appearance_mode("dark")
 ctk.set_default_color_theme("blue")
 
@@ -25,6 +26,7 @@ daily_frame = ctk.CTkFrame(root, corner_radius=15, fg_color="#6B6B6B")
 daily_frame.grid(row=0, column=0, rowspan=2, padx=20, pady=20, sticky="nsew")
 ctk.CTkLabel(daily_frame, text="7-DAY FORECAST", font=("Helvetica", 12, "bold")).pack(pady=10)
 
+"""Setup row/column frames for hourly vs current weather information"""
 hourly_frame = ctk.CTkScrollableFrame(root, height=120, orientation="horizontal", fg_color="transparent")
 hourly_frame.grid(row=0, column=1, padx=10, pady=(10, 0), sticky="ew")
 
@@ -41,6 +43,7 @@ search_btn.pack(padx=10, pady=5)
 main_icon_label = ctk.CTkLabel(current_frame, text="")
 main_icon_label.pack(pady=0)
 #----------------
+"""Default information that will be displayed upon opening"""
 temp_label = ctk.CTkLabel(current_frame, text="--°F", font=("Helvetica", 80, "bold"), text_color="#ffffff")
 temp_label.pack(pady=(40, 0))
 
@@ -58,6 +61,7 @@ wind_label.pack(side="left", expand=True)
 
 #--------------
 def get_weather_icon(icon_code, size=(50,50)):
+    """Fetch the contents/data of the requested icon image"""
     cache_key = f"{icon_code}_{size[0]}"
 
     if cache_key in icon_cache:
@@ -70,8 +74,8 @@ def get_weather_icon(icon_code, size=(50,50)):
     return ctk.CTkImage(light_image=img, dark_image=img, size=size)
 
 #--------------
-
 def update_forecasts(w_request):
+    """Update dashboard based on inputted city's data and potentially remove existing city data on dashboard"""
     try:
         for widget in hourly_frame.winfo_children():
             if widget.winfo_exists():
@@ -107,6 +111,7 @@ def update_forecasts(w_request):
             pass
         
 def getting_weather():
+    """Update current weather information frame for given city"""
     search_btn.configure(state="disabled", text="Searching...")
     desc_label.configure(text="Fetching weather data...")
     api_key = os.getenv("OPENWEATHER_API_KEY")
