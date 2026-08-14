@@ -75,7 +75,7 @@ def get_weather_icon(icon_code, size=(50,50)):
 
 #--------------
 def update_forecasts(w_request):
-    """Update dashboard based on inputted city's data and potentially remove existing city data on dashboard"""
+    """Update dashboard based on inputted city's data and remove existing filler or city data currently on dashboard"""
     try:
         for widget in hourly_frame.winfo_children():
             if widget.winfo_exists():
