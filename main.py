@@ -71,7 +71,10 @@ def get_weather_icon(icon_code, size=(50,50)):
     response = requests.get(icon_url)
     img_data = response.content
     img = Image.open(io.BytesIO(img_data))
-    return ctk.CTkImage(light_image=img, dark_image=img, size=size)
+    ctk_image = ctk.CTkImage(light_image=img, dark_image=img, size=size)
+    icon_cache[cache_key] = ctk_image
+
+    return ctk_image
 
 #--------------
 def update_forecasts(w_request):
